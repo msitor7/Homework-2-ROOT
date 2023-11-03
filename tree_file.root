@@ -1,0 +1,44 @@
+#include "TFile.h"
+#include "TTree.h"
+#include "your_class.h"  // Include your_class header
+#include <TRandom3.h>
+
+void fillTree() {
+    // Create a ROOT file for writing the TTree
+    TFile *file = new TFile("tree_file.root", "RECREATE");
+
+    // Create a TTree named "tree" with objects of your_class
+    TTree *tree = new TTree("tree", "TTree with your_class objects");
+
+    // Create an instance of your_class to fill
+    your_class obj;
+
+    // Connect the branches in the TTree to the object members
+    tree->Branch("px", &obj.px, "px/D");
+    tree->Branch("py", &obj.py, "py/D");
+    tree->Branch("pz", &obj.pz, "pz/D");
+
+    // Define the number of events
+    Int_t nEvents = 100;
+
+    // Create a random number generator
+    TRandom3 randomGenerator;
+
+    // Fill the TTree with objects
+    for (Int_t i = 0; i < nEvents; i++) {
+        // Generate random momentum components
+        obj.px = randomGenerator.Gaus(0, 0.02);
+        obj.py = randomGenerator.Gaus(0, 0.02);
+        obj.pz = randomGenerator.Gaus(0, 0.02);
+
+        // Fill the TTree with the current object
+        tree->Fill();
+    }
+
+    // Write the TTree to the file
+    tree->Write();
+
+    // Close the file
+    file->Close();
+    delete file;   
+}
